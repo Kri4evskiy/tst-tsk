@@ -1,40 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FieldMap } from '@/widgets/field-map';
 import { ManagementSidebar } from '@/widgets/management-sidebar';
 import { CreatePointModal } from '@/features/add-point';
 import { Toast } from '@/shared/ui';
-import { useFieldStore } from '@/entities/field';
+import { useNavigationStore } from '@/shared/model';
 import { Map as MapIcon, List } from 'lucide-react';
 
 export const MapPage: React.FC = () => {
-  const { activeFieldId } = useFieldStore();
-  const [modalData, setModalData] = useState<{
-    isOpen: boolean;
-    lat: number;
-    lng: number;
-    mgrs: string;
-  }>({
-    isOpen: false,
-    lat: 0,
-    lng: 0,
-    mgrs: '',
-  });
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'map' | 'sidebar'>('map');
-
-  const handleValidClick = (lat: number, lng: number, mgrs: string) => {
-    setModalData({
-      isOpen: true,
-      lat,
-      lng,
-      mgrs,
-    });
-  };
-
-  const handleInvalidClick = (msg: string) => {
-    setErrorMessage(msg);
-  };
+  const { activeTab, setActiveTab } = useNavigationStore();
 
   return (
     <div className="flex h-screen w-screen bg-slate-100 overflow-hidden font-sans">
@@ -44,10 +17,7 @@ export const MapPage: React.FC = () => {
           activeTab === 'sidebar' ? 'block' : 'hidden lg:block'
         }`}
       >
-        <ManagementSidebar
-          onSelectPoint={() => setActiveTab('map')}
-          onSelectField={() => setActiveTab('map')}
-        />
+        <ManagementSidebar />
       </div>
 
       {/* Інтерактивна мапа */}
@@ -56,10 +26,7 @@ export const MapPage: React.FC = () => {
           activeTab === 'map' ? 'block' : 'hidden lg:block'
         }`}
       >
-        <FieldMap
-          onAddPointClick={handleValidClick}
-          onErrorToast={handleInvalidClick}
-        />
+        <FieldMap />
       </div>
 
       {/* Мобільні/планшетні кнопки швидкого перемикання (нижня плаваюча панель на < 1024px) */}
@@ -88,18 +55,11 @@ export const MapPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Модальне вікно створення точки */}
-      <CreatePointModal
-        isOpen={modalData.isOpen}
-        onClose={() => setModalData((prev) => ({ ...prev, isOpen: false }))}
-        fieldId={activeFieldId}
-        lat={modalData.lat}
-        lng={modalData.lng}
-        mgrs={modalData.mgrs}
-      />
+      {/* Модальне вікно створення точки (керується через useAddPointModalStore) */}
+      <CreatePointModal />
 
-      {/* Toast-повідомлення про помилки */}
-      <Toast message={errorMessage} onClose={() => setErrorMessage(null)} />
+      {/* Централізоване Toast-сповіщення (керується через useToastStore) */}
+      <Toast />
     </div>
   );
 };

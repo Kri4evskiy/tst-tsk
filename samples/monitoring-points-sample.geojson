@@ -1,0 +1,107 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.498, 50.416]
+      },
+      "properties": {
+        "id": "sample-pt-1",
+        "fieldId": "field-1",
+        "fieldName": "Поле №1 - Озима пшениця",
+        "type": "SOIL_SAMPLE",
+        "typeLabel": "Проба ґрунту",
+        "mgrs": "36U UA 22251 87877",
+        "description": "Аналіз кислотності ґрунту (pH 6.2) та вмісту калію",
+        "createdAt": "2026-09-20T08:30:00.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.525, 50.418]
+      },
+      "properties": {
+        "id": "sample-pt-2",
+        "fieldId": "field-2",
+        "fieldName": "Поле №2 - Соняшник класичний",
+        "type": "PESTS",
+        "typeLabel": "Шкідники",
+        "mgrs": "36U UA 24176 88035",
+        "description": "Локальний осередок лучного метелика на східному краї поля",
+        "createdAt": "2026-09-21T10:15:00.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.501, 50.434]
+      },
+      "properties": {
+        "id": "sample-pt-3",
+        "fieldId": "field-3",
+        "fieldName": "Поле №3 - Кукурудза на зерно",
+        "type": "PLANT_DISEASE",
+        "typeLabel": "Хвороба рослин",
+        "mgrs": "36U UA 22531 89870",
+        "description": "Початкові симптоми пухирчастої сажки після зливи",
+        "createdAt": "2026-09-22T14:45:00.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.528, 50.435]
+      },
+      "properties": {
+        "id": "sample-pt-4",
+        "fieldId": "field-4",
+        "fieldName": "Поле №4 - Ріпак озимий",
+        "type": "SOIL_SAMPLE",
+        "typeLabel": "Проба ґрунту",
+        "mgrs": "36U UA 24452 89918",
+        "description": "Замір вологості горизонту 10-20 см (TDR-вологомір 24%)",
+        "createdAt": "2026-09-23T09:00:00.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.492, 50.413]
+      },
+      "properties": {
+        "id": "sample-pt-5",
+        "fieldId": "field-1",
+        "fieldName": "Поле №1 - Озима пшениця",
+        "type": "OTHER",
+        "typeLabel": "Інше",
+        "mgrs": "36U UA 21814 87557",
+        "description": "Контрольна точка встановлення метеостанції та датчика листя",
+        "createdAt": "2026-09-23T16:20:00.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.532, 50.437]
+      },
+      "properties": {
+        "id": "sample-pt-6",
+        "fieldId": "field-4",
+        "fieldName": "Поле №4 - Ріпак озимий",
+        "type": "PESTS",
+        "typeLabel": "Шкідники",
+        "mgrs": "36U UA 24744 90130",
+        "description": "Моніторинг пасток на ріпакового квіткоїда (3 екз/рослину)",
+        "createdAt": "2026-09-24T07:10:00.000Z"
+      }
+    }
+  ]
+}

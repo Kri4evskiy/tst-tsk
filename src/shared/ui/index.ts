@@ -1,4 +1,4 @@
 export { Modal } from './Modal/Modal';
 export type { ModalProps } from './Modal/Modal';
-export { Toast } from './Toast/Toast';
-export type { ToastProps } from './Toast/Toast';
+export { Toast, useToastStore } from './Toast';
+export type { ToastProps, ToastType, ToastState } from './Toast';

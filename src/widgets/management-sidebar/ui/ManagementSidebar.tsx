@@ -4,6 +4,7 @@ import { usePointStore, PointCard } from '@/entities/point';
 import { PointsFilterBar } from '@/features/filter-points';
 import { ExportPointsButton } from '@/features/export-points';
 import { ResetDataButton } from '@/features/reset-demo-data';
+import { useNavigationStore } from '@/shared/model';
 import { POINT_TYPE_CONFIGS } from '@/shared/config/pointTypes';
 import { Layers, MapPin, Sprout } from 'lucide-react';
 
@@ -16,7 +17,9 @@ export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({
   onSelectPoint,
   onSelectField,
 }) => {
+  const setActiveTab = useNavigationStore((s) => s.setActiveTab);
   const { fields, activeFieldId, setActiveFieldId } = useFieldStore();
+
   const {
     points,
     searchQuery,
@@ -116,6 +119,7 @@ export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({
                   onSelect={() => {
                     setFocusedPoint(null);
                     setActiveFieldId(field.properties.id);
+                    setActiveTab('map');
                     onSelectField?.();
                   }}
                 />
@@ -162,6 +166,7 @@ export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({
                     onSelect={() => {
                       setActiveFieldId(point.fieldId);
                       setFocusedPoint(point);
+                      setActiveTab('map');
                       onSelectPoint?.();
                     }}
                     onDelete={() => deletePoint(point.id)}

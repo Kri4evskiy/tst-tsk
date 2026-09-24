@@ -32,6 +32,7 @@ interface PointStore {
 
   // Actions
   addPoint: (point: MonitoringPoint) => void;
+  importPoints: (imported: MonitoringPoint[]) => number;
   deletePoint: (id: string) => void;
   resetPoints: () => void;
   setSearchQuery: (query: string) => void;
@@ -53,6 +54,24 @@ export const usePointStore = create<PointStore>((set) => ({
       savePoints(updated);
       return { points: updated };
     }),
+
+  importPoints: (imported) => {
+    let count = 0;
+    set((state) => {
+      const existingIds = new Set(state.points.map((p) => p.id));
+      const normalized = imported.map((p, idx) => {
+        if (existingIds.has(p.id)) {
+          return { ...p, id: `point-${Date.now()}-${idx}` };
+        }
+        return p;
+      });
+      count = normalized.length;
+      const updated = [...normalized, ...state.points];
+      savePoints(updated);
+      return { points: updated };
+    });
+    return count;
+  },
 
   deletePoint: (id) =>
     set((state) => {

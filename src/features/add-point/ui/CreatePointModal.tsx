@@ -1,27 +1,32 @@
 import React, { useState } from 'react';
 import { Modal } from '@/shared/ui';
 import { usePointStore, type MonitoringPoint } from '@/entities/point';
+import { useFieldStore } from '@/entities/field';
 import { POINT_TYPE_CONFIGS, type PointType } from '@/shared/config/pointTypes';
 import { MapPin, Navigation, Tag, FileText } from 'lucide-react';
+import { useAddPointModalStore } from '../model/useAddPointModalStore';
 
 export interface CreatePointModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  fieldId: string;
-  lat: number;
-  lng: number;
-  mgrs: string;
+  isOpen?: boolean;
+  onClose?: () => void;
+  fieldId?: string;
+  lat?: number;
+  lng?: number;
+  mgrs?: string;
 }
 
-export const CreatePointModal: React.FC<CreatePointModalProps> = ({
-  isOpen,
-  onClose,
-  fieldId,
-  lat,
-  lng,
-  mgrs,
-}) => {
+export const CreatePointModal: React.FC<CreatePointModalProps> = (props) => {
+  const storeModal = useAddPointModalStore();
+  const { activeFieldId } = useFieldStore();
   const { addPoint } = usePointStore();
+
+  const isOpen = props.isOpen !== undefined ? props.isOpen : storeModal.isOpen;
+  const onClose = props.onClose ?? storeModal.closeModal;
+  const fieldId = props.fieldId ?? activeFieldId;
+  const lat = props.lat !== undefined ? props.lat : storeModal.lat;
+  const lng = props.lng !== undefined ? props.lng : storeModal.lng;
+  const mgrs = props.mgrs !== undefined ? props.mgrs : storeModal.mgrs;
+
   const [type, setType] = useState<PointType>('SOIL_SAMPLE');
   const [description, setDescription] = useState('');
 
