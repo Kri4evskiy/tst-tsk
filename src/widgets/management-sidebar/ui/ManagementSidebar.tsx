@@ -5,6 +5,7 @@ import { PointsFilterBar } from '@/features/filter-points'
 import { ExportPointsButton } from '@/features/export-points'
 import { ResetDataButton } from '@/features/reset-demo-data'
 import { useNavigationStore } from '@/shared/model'
+import { useToastStore } from '@/shared/ui'
 import { POINT_TYPE_CONFIGS } from '@/shared/config/pointTypes'
 import { Layers, MapPin, Sprout } from 'lucide-react'
 
@@ -15,6 +16,7 @@ interface ManagementSidebarProps {
 
 export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({ onSelectPoint, onSelectField }) => {
   const setActiveTab = useNavigationStore((s) => s.setActiveTab)
+  const showToast = useToastStore((s) => s.showToast)
   const { fields, activeFieldId, setActiveFieldId } = useFieldStore()
 
   const {
@@ -155,8 +157,20 @@ export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({ onSelectPo
 
           {/* Семантичний список точок ul / li */}
           {filteredPoints.length === 0 ? (
-            <div className="p-6 text-center bg-white rounded-xl border border-dashed border-slate-200 text-xs text-slate-400">
-              Точок не знайдено
+            <div className="p-6 text-center bg-white rounded-xl border border-dashed border-slate-200 text-xs text-slate-400 space-y-2.5">
+              <p>Точок за вашим запитом не знайдено</p>
+              {(searchQuery.trim() !== '' || selectedType !== 'ALL') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setSelectedType('ALL')
+                  }}
+                  className="px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors cursor-pointer"
+                >
+                  Скинути фільтри
+                </button>
+              )}
             </div>
           ) : (
             <ul role="list" className="space-y-2 p-0 m-0 list-none">
@@ -173,7 +187,10 @@ export const ManagementSidebar: React.FC<ManagementSidebarProps> = ({ onSelectPo
                         setActiveTab('map')
                         onSelectPoint?.()
                       }}
-                      onDelete={() => deletePoint(point.id)}
+                      onDelete={() => {
+                        deletePoint(point.id)
+                        showToast('Точку моніторингу видалено', 'info')
+                      }}
                     />
                   </li>
                 )

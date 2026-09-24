@@ -5,6 +5,7 @@ import {
   GeoJSON,
   Marker,
   Popup,
+  ZoomControl,
 } from 'react-leaflet';
 import L from 'leaflet';
 import { useFieldStore } from '@/entities/field';
@@ -12,7 +13,9 @@ import { usePointStore, createPointCustomIcon, PointPopup } from '@/entities/poi
 import { convertWgs84ToMgrs } from '@/shared/lib/geo/geo';
 import { useBasemapStore, BasemapSwitcher } from '@/features/toggle-basemap';
 import { useAddPointModalStore } from '@/features/add-point';
+import { useToastStore } from '@/shared/ui';
 import { BASEMAPS } from '@/shared/config/basemaps';
+import { Crosshair } from 'lucide-react';
 import { MapCameraController } from './MapCameraController';
 import { MapEventsHandler } from './MapEventsHandler';
 import { MapResizeInvalidator } from './MapResizeInvalidator';
@@ -30,10 +33,28 @@ export const FieldMap: React.FC<FieldMapProps> = ({
   const { points, deletePoint, setFocusedPoint } = usePointStore();
   const activeBasemap = useBasemapStore((state) => state.activeBasemap);
   const openAddPointModal = useAddPointModalStore((state) => state.openModal);
+  const showToast = useToastStore((state) => state.showToast);
   const basemapConfig = BASEMAPS[activeBasemap];
+
+  const mapRef = useRef<L.Map | null>(null);
 
   // Зберігаємо посилання на Leaflet GeoJSON шари для плавного setStyle без перемотування DOM
   const geoJsonRefs = useRef<Record<string, L.GeoJSON>>({});
+
+  // Швидке центрування на активне поле
+  const handleFocusActiveField = () => {
+    setFocusedPoint(null);
+    const activeField = fields.find((f) => f.properties.id === activeFieldId);
+    if (activeField && mapRef.current) {
+      const latLngs = activeField.geometry.coordinates[0]?.map(
+        ([lng, lat]) => [lat, lng] as [number, number]
+      );
+      if (latLngs && latLngs.length > 0) {
+        const bounds = L.latLngBounds(latLngs);
+        mapRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+      }
+    }
+  };
 
   // Адаптивні стилі для полігонів полів (контрастні на супутнику та гармонійні на схемі)
   const getFieldStyle = React.useCallback(
@@ -88,6 +109,7 @@ export const FieldMap: React.FC<FieldMapProps> = ({
   return (
     <div className="relative w-full h-full">
       <MapContainer
+        ref={mapRef}
         center={[50.42, 30.51]}
         zoom={14}
         className="w-full h-full z-0"
@@ -100,6 +122,7 @@ export const FieldMap: React.FC<FieldMapProps> = ({
           maxZoom={basemapConfig.maxZoom}
         />
 
+        <ZoomControl position="bottomright" />
         <MapResizeInvalidator />
         <MapCameraController />
         <MapEventsHandler
@@ -165,7 +188,10 @@ export const FieldMap: React.FC<FieldMapProps> = ({
                 <PointPopup
                   point={pt}
                   fieldName={ptField?.properties.name}
-                  onDelete={() => deletePoint(pt.id)}
+                  onDelete={() => {
+                    deletePoint(pt.id);
+                    showToast('Точку моніторингу видалено', 'info');
+                  }}
                 />
               </Popup>
             </Marker>
@@ -182,6 +208,19 @@ export const FieldMap: React.FC<FieldMapProps> = ({
       {/* Перемикач підкладки карти (Схема / Супутник) */}
       <div className="absolute top-4 right-4 z-10">
         <BasemapSwitcher />
+      </div>
+
+      {/* Кнопка швидкого центрування на активне поле (над зум-контролом) */}
+      <div className="absolute bottom-24 right-3 z-10">
+        <button
+          type="button"
+          onClick={handleFocusActiveField}
+          className="w-8 h-8 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-md flex items-center justify-center text-slate-700 hover:text-emerald-700 transition-all cursor-pointer"
+          title="Сфокусувати активне поле"
+          aria-label="Сфокусувати активне поле"
+        >
+          <Crosshair className="w-4 h-4 text-emerald-600" />
+        </button>
       </div>
     </div>
   );

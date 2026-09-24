@@ -53,3 +53,27 @@ path.leaflet-interactive:focus-visible,
 .custom-point-marker:hover .custom-point-marker-inner {
   transform: scale(1.18);
 }
+
+/* 4. Сучасна стилізація контролів зуму Leaflet у стилістиці AgTech */
+.leaflet-bar {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 16px !important;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.leaflet-bar a:hover {
+  background-color: #f8fafc !important;
+  color: #059669 !important;
+}
