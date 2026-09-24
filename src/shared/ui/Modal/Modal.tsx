@@ -23,7 +23,8 @@ export const Modal: React.FC<ModalProps> = ({
         <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-200" />
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <Dialog.Content className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden pointer-events-auto outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            {/* Семантичний header діалогового вікна */}
+            <header className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
               <Dialog.Title className="text-lg font-semibold text-slate-800">
                 {title}
               </Dialog.Title>
@@ -36,7 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
                   <X className="w-5 h-5" />
                 </button>
               </Dialog.Close>
-            </div>
+            </header>
 
             <Dialog.Description className={description ? 'px-6 pt-3 text-xs text-slate-500' : 'sr-only'}>
               {description || title}

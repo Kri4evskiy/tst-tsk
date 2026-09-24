@@ -19,6 +19,7 @@
     "mgrs": "^2.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-hook-form": "^7.88.0",
     "react-leaflet": "^5.0.0",
     "tailwind-merge": "^3.7.0",
     "zustand": "^5.0.15"

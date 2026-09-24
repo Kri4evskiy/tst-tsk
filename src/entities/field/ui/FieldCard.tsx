@@ -16,9 +16,19 @@ export const FieldCard: React.FC<FieldCardProps> = ({
   onSelect,
 }) => {
   return (
-    <div
+    <article
       onClick={onSelect}
-      className={`p-3 rounded-xl border transition-all cursor-pointer relative ${
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-pressed={isActive}
+      aria-label={`${field.properties.name}, площа ${field.properties.area} гектарів, культура ${field.properties.crop}`}
+      className={`p-3 rounded-xl border transition-all cursor-pointer relative outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
         isActive
           ? 'bg-emerald-50/70 border-emerald-500 shadow-sm'
           : 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
@@ -53,6 +63,6 @@ export const FieldCard: React.FC<FieldCardProps> = ({
           {pointsCount}
         </span>
       </div>
-    </div>
+    </article>
   );
 };

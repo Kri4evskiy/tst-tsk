@@ -22,12 +22,16 @@ export const PointsFilterBar: React.FC<PointsFilterBarProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      {/* Пошуковий інпут та кнопка сортування */}
-      <div className="flex items-center gap-2">
+      {/* Семантичний пошуковий контейнер search */}
+      <search role="search" className="flex items-center gap-2">
         <div className="relative flex-1">
+          <label htmlFor="points-search-input" className="sr-only">
+            Пошук моніторингових точок за описом, MGRS або назвою поля
+          </label>
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400 pointer-events-none" />
           <input
-            type="text"
+            id="points-search-input"
+            type="search"
             placeholder="Пошук за описом, MGRS, полем..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -36,7 +40,9 @@ export const PointsFilterBar: React.FC<PointsFilterBarProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={onSortToggle}
+          aria-label={`Сортування за датою: зараз ${sortOrder === 'desc' ? 'спочатку нові' : 'спочатку старі'}`}
           className="flex items-center gap-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white px-2.5 py-2 rounded-xl border border-slate-200 cursor-pointer transition-colors shrink-0"
           title="Перемкнути сортування за датою"
         >
@@ -45,12 +51,18 @@ export const PointsFilterBar: React.FC<PointsFilterBarProps> = ({
             {sortOrder === 'desc' ? 'Нові' : 'Старі'}
           </span>
         </button>
-      </div>
+      </search>
 
-      {/* Фільтрація за типом точки */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      {/* Семантична панель інструментів фільтрації (toolbar) */}
+      <div
+        role="toolbar"
+        aria-label="Фільтрація точок за категоріями замірів"
+        className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none"
+      >
         <button
+          type="button"
           onClick={() => onTypeChange('ALL')}
+          aria-pressed={selectedType === 'ALL'}
           className={`px-2.5 py-1 rounded-lg text-xs font-medium shrink-0 transition-colors cursor-pointer ${
             selectedType === 'ALL'
               ? 'bg-slate-800 text-white shadow-xs'
@@ -65,7 +77,9 @@ export const PointsFilterBar: React.FC<PointsFilterBarProps> = ({
           return (
             <button
               key={key}
+              type="button"
               onClick={() => onTypeChange(key)}
+              aria-pressed={isSelected}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium shrink-0 transition-colors cursor-pointer ${
                 isSelected
                   ? 'bg-slate-800 text-white shadow-xs'

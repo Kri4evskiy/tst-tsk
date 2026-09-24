@@ -18,8 +18,12 @@ export const PointPopup: React.FC<PointPopupProps> = ({
   const config = POINT_TYPE_CONFIGS[point.type];
 
   return (
-    <div className="p-3.5 min-w-[240px] text-slate-800">
-      <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+    <article
+      aria-label={`Моніторингова точка ${config.label}${fieldName ? `, ${fieldName}` : ''}`}
+      className="p-3.5 min-w-[240px] text-slate-800"
+    >
+      {/* Семантичний header попапа */}
+      <header className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
         <div>
           <span
             className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
@@ -37,13 +41,15 @@ export const PointPopup: React.FC<PointPopupProps> = ({
           )}
         </div>
         <button
+          type="button"
           onClick={onDelete}
           className="p-1 rounded-md text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
           title="Видалити точку"
+          aria-label="Видалити моніторингову точку"
         >
           <Trash2 className="w-4 h-4" />
         </button>
-      </div>
+      </header>
 
       {point.description && (
         <p className="text-xs text-slate-600 mb-3 bg-slate-50 p-2 rounded-lg border border-slate-100 italic">
@@ -51,10 +57,13 @@ export const PointPopup: React.FC<PointPopupProps> = ({
         </p>
       )}
 
-      <div className="space-y-1.5 text-[11px] text-slate-500">
+      {/* Семантичний footer попапа */}
+      <footer className="space-y-1.5 text-[11px] text-slate-500">
         <div className="flex items-center gap-1.5 font-mono">
           <MapPin className="w-3 h-3 text-slate-400" />
-          <span>{point.coordinates.lat}, {point.coordinates.lng}</span>
+          <span>
+            {point.coordinates.lat}, {point.coordinates.lng}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 font-mono">
           <Navigation className="w-3 h-3 text-indigo-500" />
@@ -62,9 +71,9 @@ export const PointPopup: React.FC<PointPopupProps> = ({
         </div>
         <div className="flex items-center gap-1.5 text-slate-400 pt-1">
           <Calendar className="w-3 h-3" />
-          <span>{formatDateTime(point.createdAt)}</span>
+          <time dateTime={point.createdAt}>{formatDateTime(point.createdAt)}</time>
         </div>
-      </div>
-    </div>
+      </footer>
+    </article>
   );
 };
