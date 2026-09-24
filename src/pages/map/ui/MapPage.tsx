@@ -2,7 +2,6 @@ import React from 'react';
 import { FieldMap } from '@/widgets/field-map';
 import { ManagementSidebar } from '@/widgets/management-sidebar';
 import { CreatePointModal } from '@/features/add-point';
-import { Toast } from '@/shared/ui';
 import { useNavigationStore } from '@/shared/model';
 import { Map as MapIcon, List } from 'lucide-react';
 
@@ -57,9 +56,6 @@ export const MapPage: React.FC = () => {
 
       {/* Модальне вікно створення точки (керується через useAddPointModalStore) */}
       <CreatePointModal />
-
-      {/* Централізоване Toast-сповіщення (керується через useToastStore) */}
-      <Toast />
     </div>
   );
 };
