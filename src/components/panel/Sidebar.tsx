@@ -16,7 +16,12 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onSelectPoint?: () => void;
+  onSelectField?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ onSelectPoint, onSelectField }) => {
   const { fields, activeFieldId, setActiveFieldId } = useFieldStore();
   const {
     points,
@@ -39,14 +44,20 @@ export const Sidebar: React.FC = () => {
       result = result.filter((p) => p.type === selectedType);
     }
 
-    // Пошук за описом (case-insensitive)
+    // Пошук за описом, MGRS або назвою типу (case-insensitive)
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (p) =>
+      result = result.filter((p) => {
+        const typeLabel = POINT_TYPE_CONFIGS[p.type]?.label.toLowerCase() || '';
+        const field = fields.find((f) => f.properties.id === p.fieldId);
+        const fieldName = field?.properties.name.toLowerCase() || '';
+        return (
           p.description?.toLowerCase().includes(q) ||
-          p.mgrs.toLowerCase().includes(q)
-      );
+          p.mgrs.toLowerCase().includes(q) ||
+          typeLabel.includes(q) ||
+          fieldName.includes(q)
+        );
+      });
     }
 
     // Сортування за датою
@@ -57,7 +68,7 @@ export const Sidebar: React.FC = () => {
     });
 
     return result;
-  }, [points, selectedType, searchQuery, sortOrder]);
+  }, [points, selectedType, searchQuery, sortOrder, fields]);
 
   return (
     <div className="flex flex-col h-full bg-slate-50 border-r border-slate-200 overflow-hidden">
@@ -98,7 +109,10 @@ export const Sidebar: React.FC = () => {
               return (
                 <div
                   key={field.properties.id}
-                  onClick={() => setActiveFieldId(field.properties.id)}
+                  onClick={() => {
+                    setActiveFieldId(field.properties.id);
+                    onSelectField?.();
+                  }}
                   className={`p-3 rounded-xl border transition-all cursor-pointer relative ${
                     isActive
                       ? 'bg-emerald-50/70 border-emerald-500 shadow-sm'
@@ -215,28 +229,40 @@ export const Sidebar: React.FC = () => {
             ) : (
               filteredPoints.map((point) => {
                 const config = POINT_TYPE_CONFIGS[point.type];
+                const pointField = fields.find((f) => f.properties.id === point.fieldId);
                 return (
                   <div
                     key={point.id}
-                    onClick={() => setFocusedPoint(point)}
+                    onClick={() => {
+                      setActiveFieldId(point.fieldId);
+                      setFocusedPoint(point);
+                      onSelectPoint?.();
+                    }}
                     className="p-3 bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all cursor-pointer group"
                   >
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span
-                        className="px-2 py-0.5 rounded-md text-[11px] font-semibold"
-                        style={{
-                          backgroundColor: config.bgColor,
-                          color: config.borderColor,
-                        }}
-                      >
-                        {config.label}
-                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span
+                          className="px-2 py-0.5 rounded-md text-[11px] font-semibold"
+                          style={{
+                            backgroundColor: config.bgColor,
+                            color: config.borderColor,
+                          }}
+                        >
+                          {config.label}
+                        </span>
+                        {pointField && (
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            • {pointField.properties.name}
+                          </span>
+                        )}
+                      </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           deletePoint(point.id);
                         }}
-                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
                         title="Видалити"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

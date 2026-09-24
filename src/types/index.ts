@@ -1,3 +1,5 @@
+import type { Feature, Polygon } from 'geojson';
+
 export type PointType = 'SOIL_SAMPLE' | 'PESTS' | 'PLANT_DISEASE' | 'OTHER';
 
 export interface FieldProperties {
@@ -7,14 +9,7 @@ export interface FieldProperties {
   crop: string;
 }
 
-export interface FieldFeature {
-  type: 'Feature';
-  properties: FieldProperties;
-  geometry: {
-    type: 'Polygon';
-    coordinates: number[][][]; // GeoJSON: [longitude, latitude]
-  };
-}
+export type FieldFeature = Feature<Polygon, FieldProperties>;
 
 export interface MonitoringPoint {
   id: string;

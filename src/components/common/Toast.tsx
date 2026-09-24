@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AlertCircle, X } from 'lucide-react';
 
 interface ToastProps {
   message: string | null;
   onClose: () => void;
+  duration?: number;
 }
 
-export const Toast: React.FC<ToastProps> = ({ message, onClose }) => {
+export const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 4000 }) => {
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [message, onClose, duration]);
+
   if (!message) return null;
 
   return (
@@ -15,7 +24,8 @@ export const Toast: React.FC<ToastProps> = ({ message, onClose }) => {
       <span>{message}</span>
       <button
         onClick={onClose}
-        className="p-1 -mr-1 rounded-md hover:bg-red-700/80 transition-colors"
+        className="p-1 -mr-1 rounded-md hover:bg-red-700/80 transition-colors cursor-pointer"
+        aria-label="Закрити сповіщення"
       >
         <X className="w-4 h-4" />
       </button>

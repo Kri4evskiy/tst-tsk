@@ -57,12 +57,13 @@ const MapEventsHandler: React.FC<MapEventsHandlerProps> = ({
 // Контролер авто-центрування та анімацій
 const MapCameraController: React.FC = () => {
   const map = useMap();
-  const { getActiveField } = useFieldStore();
-  const { focusedPoint } = usePointStore();
+  const activeFieldId = useFieldStore((state) => state.activeFieldId);
+  const fields = useFieldStore((state) => state.fields);
+  const focusedPoint = usePointStore((state) => state.focusedPoint);
 
   // При зміні активного поля плавно центруємо на його контури
   useEffect(() => {
-    const activeField = getActiveField();
+    const activeField = fields.find((f) => f.properties.id === activeFieldId);
     if (activeField) {
       // Конвертуємо GeoJSON [lng, lat] в Leaflet LatLngExpression [lat, lng]
       const latLngs = activeField.geometry.coordinates[0]?.map(
@@ -73,7 +74,7 @@ const MapCameraController: React.FC = () => {
         map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16, duration: 0.8 });
       }
     }
-  }, [map, getActiveField]);
+  }, [map, activeFieldId, fields]);
 
   // Фокус на конкретну точку зі списку
   useEffect(() => {
@@ -166,13 +167,30 @@ export const FieldMap: React.FC<FieldMapProps> = ({
         {fields.map((field) => (
           <GeoJSON
             key={`${field.properties.id}-${field.properties.id === activeFieldId}`}
-            data={field as any}
+            data={field}
             style={() => fieldStyle(field)}
             eventHandlers={{
               click: (e) => {
                 L.DomEvent.stopPropagation(e);
-                setActiveFieldId(field.properties.id);
+                if (field.properties.id !== activeFieldId) {
+                  // Клік по іншому полю активує його
+                  setActiveFieldId(field.properties.id);
+                } else {
+                  // Клік всередині вже активного поля створює нову точку
+                  const { lat, lng } = e.latlng;
+                  const mgrsCoords = convertWgs84ToMgrs(lat, lng);
+                  onAddPointClick(lat, lng, mgrsCoords);
+                }
               },
+            }}
+            onEachFeature={(_feature, layer) => {
+              layer.bindTooltip(
+                `<div class="p-1 text-xs">
+                  <div class="font-bold text-slate-800">${field.properties.name}</div>
+                  <div class="text-slate-600">${field.properties.area} га • ${field.properties.crop}</div>
+                </div>`,
+                { sticky: true, className: 'rounded-lg shadow-sm border border-slate-200' }
+              );
             }}
           />
         ))}
@@ -180,6 +198,7 @@ export const FieldMap: React.FC<FieldMapProps> = ({
         {/* Відображення моніторингових точок */}
         {points.map((pt) => {
           const config = POINT_TYPE_CONFIGS[pt.type];
+          const ptField = fields.find((f) => f.properties.id === pt.fieldId);
           return (
             <Marker
               key={pt.id}
@@ -189,18 +208,25 @@ export const FieldMap: React.FC<FieldMapProps> = ({
               <Popup>
                 <div className="p-3.5 min-w-[240px] text-slate-800">
                   <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
-                    <span
-                      className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                      style={{
-                        backgroundColor: config.bgColor,
-                        color: config.borderColor,
-                      }}
-                    >
-                      {config.label}
-                    </span>
+                    <div>
+                      <span
+                        className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                        style={{
+                          backgroundColor: config.bgColor,
+                          color: config.borderColor,
+                        }}
+                      >
+                        {config.label}
+                      </span>
+                      {ptField && (
+                        <div className="text-[10px] text-slate-400 font-medium mt-1">
+                          {ptField.properties.name}
+                        </div>
+                      )}
+                    </div>
                     <button
                       onClick={() => deletePoint(pt.id)}
-                      className="p-1 rounded-md text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                      className="p-1 rounded-md text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
                       title="Видалити точку"
                     >
                       <Trash2 className="w-4 h-4" />

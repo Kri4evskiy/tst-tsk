@@ -44,7 +44,10 @@ export function App() {
           activeTab === 'sidebar' ? 'block' : 'hidden lg:block'
         }`}
       >
-        <Sidebar />
+        <Sidebar
+          onSelectPoint={() => setActiveTab('map')}
+          onSelectField={() => setActiveTab('map')}
+        />
       </div>
 
       {/* Головна мапа */}
