@@ -1,21 +1,17 @@
-import React from 'react';
-import type { MonitoringPoint } from '../model/types';
-import { POINT_TYPE_CONFIGS } from '@/shared/config/pointTypes';
-import { formatDateTime } from '@/shared/lib/format/formatters';
-import { Trash2, Calendar, Navigation, MapPin } from 'lucide-react';
+import React from 'react'
+import type { MonitoringPoint } from '../model/types'
+import { POINT_TYPE_CONFIGS } from '@/shared/config/pointTypes'
+import { formatDateTime } from '@/shared/lib/format/formatters'
+import { Trash2, Calendar, Navigation, MapPin } from 'lucide-react'
 
 interface PointPopupProps {
-  point: MonitoringPoint;
-  fieldName?: string;
-  onDelete: () => void;
+  point: MonitoringPoint
+  fieldName?: string
+  onDelete: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-export const PointPopup: React.FC<PointPopupProps> = ({
-  point,
-  fieldName,
-  onDelete,
-}) => {
-  const config = POINT_TYPE_CONFIGS[point.type];
+export const PointPopup: React.FC<PointPopupProps> = ({ point, fieldName, onDelete }) => {
+  const config = POINT_TYPE_CONFIGS[point.type]
 
   return (
     <article
@@ -34,11 +30,7 @@ export const PointPopup: React.FC<PointPopupProps> = ({
           >
             {config.label}
           </span>
-          {fieldName && (
-            <div className="text-[10px] text-slate-400 font-medium mt-1">
-              {fieldName}
-            </div>
-          )}
+          {fieldName && <div className="text-[10px] text-slate-400 font-medium mt-1">{fieldName}</div>}
         </div>
         <button
           type="button"
@@ -75,5 +67,5 @@ export const PointPopup: React.FC<PointPopupProps> = ({
         </div>
       </footer>
     </article>
-  );
-};
+  )
+}
